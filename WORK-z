@@ -1,0 +1,188 @@
+import tkinter as tk
+from tkinter import ttk
+from datetime import datetime
+
+def iniciar_sesion():
+    if usuario_registrado.get():
+        etiqueta_estado.config(text="¡Sesión iniciada!")
+        ventana_inicial.after(1000, lambda: (ventana_inicial.destroy(), ventana_principal()))
+    else:
+        etiqueta_estado.config(text="Usuario no registrado. Redirigiendo al registro...")
+        ventana_inicial.after(2000, lambda: registrar_usuario(True))
+
+def registrar_usuario(redireccionado=False):
+    def insertar_usuario():
+        usuario_registrado.set(True)
+        etiqueta_estado_registro.config(text="Usuario registrado exitosamente")
+        if redireccionado:
+            ventana_registro.after(2000, lambda: (ventana_registro.destroy(), ventana_principal()))
+        else:
+            ventana_registro.after(2000, lambda: (ventana_registro.destroy(), ventana_inicial.deiconify()))
+
+    ventana_registro = tk.Tk()
+    ventana_registro.title("Work-Z Registro")
+    ventana_registro.geometry("400x500")
+    ventana_registro.configure(bg="#f0e68c")
+    if redireccionado:
+        ventana_inicial.withdraw()
+
+    etiqueta_titulo_registro = tk.Label(ventana_registro, text="Registro en Work-Z", fg="black", bg="#f0e68c", justify="center", font=("Arial", 18, "bold"))
+    etiqueta_titulo_registro.pack(pady=20)
+
+    # Campos de registro
+    etiqueta_nombre = tk.Label(ventana_registro, text="Nombre:", bg="#f0e68c")
+    etiqueta_nombre.pack(pady=10)
+    entrada_nombre = tk.Entry(ventana_registro, width=50)
+    entrada_nombre.pack()
+
+    etiqueta_apellido = tk.Label(ventana_registro, text="Apellido:", bg="#f0e68c")
+    etiqueta_apellido.pack(pady=10)
+    entrada_apellido = tk.Entry(ventana_registro, width=50)
+    entrada_apellido.pack()
+
+    etiqueta_matricula = tk.Label(ventana_registro, text="Matrícula:", bg="#f0e68c")
+    etiqueta_matricula.pack(pady=10)
+    entrada_matricula = tk.Entry(ventana_registro, width=50)
+    entrada_matricula.pack()
+
+    etiqueta_contraseña = tk.Label(ventana_registro, text="Contraseña:", bg="#f0e68c")
+    etiqueta_contraseña.pack(pady=10)
+    entrada_contraseña = tk.Entry(ventana_registro, show="*", width=50)
+    entrada_contraseña.pack()
+
+    boton_registro = tk.Button(ventana_registro, text="Registrarse", command=insertar_usuario, bg="#4682b4", fg="white", font=("Arial", 12, "bold"))
+    boton_registro.pack(pady=20)
+
+    etiqueta_estado_registro = tk.Label(ventana_registro, text="", bg="#f0e68c", font=("Arial", 12))
+    etiqueta_estado_registro.pack(pady=20)
+
+# Crear la ventana principal
+ventana_inicial = tk.Tk()
+ventana_inicial.title("Work-Z Inicio de Sesión")
+ventana_inicial.geometry("400x500")
+ventana_inicial.configure(bg="#ffefd5")
+
+usuario_registrado = tk.BooleanVar()
+usuario_registrado.set(False)
+
+etiqueta_titulo = tk.Label(ventana_inicial, text="Bienvenido a Work-Z", fg="black", bg="#ffefd5", justify="center", font=("Arial", 20, "bold"))
+etiqueta_titulo.pack(pady=20)
+
+campo_usuario = tk.Entry(ventana_inicial, fg="gray", bg="white", width=50)
+campo_usuario.insert(0, 'Ingrese su usuario')
+campo_usuario.pack(pady=20)
+
+campo_contraseña = tk.Entry(ventana_inicial, fg="gray", bg="white", width=50, show="*")
+campo_contraseña.insert(0, 'Ingrese su contraseña')
+campo_contraseña.pack(pady=20)
+
+boton_iniciar = tk.Button(ventana_inicial, text="Iniciar sesión", command=iniciar_sesion, bg="#8a2be1", fg="white", font=("Arial", 12, "bold"))
+boton_iniciar.pack(pady=20)
+
+boton_registrarse = tk.Button(ventana_inicial, text="Registrarse", command=lambda: registrar_usuario(False), bg="#3cb371", fg="white", font=("Arial", 12, "bold"))
+boton_registrarse.pack(pady=20)
+
+etiqueta_estado = tk.Label(ventana_inicial, text="Esperando interacción...", bg="#ffefd5", font=("Arial", 12))
+etiqueta_estado.pack(pady=20)
+
+def mover_titulo():
+    canvas.move(titulo_animado, 4, 0)
+    pos = canvas.coords(titulo_animado)
+    if pos[0] > 400:
+        canvas.coords(titulo_animado, 0, pos[1])
+    ventana_inicial.after(50, mover_titulo)
+
+canvas = tk.Canvas(ventana_inicial, width=400, height=50, bg="#ffefd5", highlightthickness=0)
+canvas.pack(pady=10)
+titulo_animado = canvas.create_text(0, 25, text="Work-Z", fill="black", font=("Arial", 24, "bold"))
+
+mover_titulo()
+
+def actualizar_fecha_hora():
+    ahora = datetime.now()
+    fecha_hora = ahora.strftime("%Y-%m-%d %H:%M:%S")
+    etiqueta_fecha_hora.config(text=fecha_hora)
+    ventana_inicial.after(1000, actualizar_fecha_hora)
+
+etiqueta_fecha_hora = tk.Label(ventana_inicial, text="", bg="#ffefd5", font=("Arial", 12))
+etiqueta_fecha_hora.pack(pady=10)
+actualizar_fecha_hora()
+
+def ventana_principal():
+    ventana = tk.Tk()
+    ventana.title("Work-Z Principal")
+    ventana.geometry("600x400")
+    ventana.configure(bg="#e6e6fa")
+
+    notebook = ttk.Notebook(ventana)
+    notebook.pack(fill='both', expand=True)
+
+    # Pestaña de inicio
+    frame_inicio = tk.Frame(notebook, bg="#ffb6c1")
+    notebook.add(frame_inicio, text="Inicio")
+    label_inicio = tk.Label(frame_inicio, text="¡Bienvenido a la página principal de Work-Z!", bg="#ffb6c1", font=("Arial", 16))
+    label_inicio.pack(pady=20)
+    
+    # Botones para Word, calificaciones, materias, calendario escolar y cuadro curricular
+    frame_botones = tk.Frame(frame_inicio, bg="#ffb6c1")
+    frame_botones.pack(pady=10)
+    boton_word = tk.Button(frame_botones, text="Word", bg="#4682b4", fg="white", font=("Arial", 12, "bold"))
+    boton_word.pack(side="left", padx=10)
+    boton_calificaciones = tk.Button(frame_botones, text="Calificaciones", bg="#4682b4", fg="white", font=("Arial", 12, "bold"))
+    boton_calificaciones.pack(side="left", padx=10)
+    boton_materias = tk.Button(frame_botones, text="Materias", bg="#4682b4", fg="white", font=("Arial", 12, "bold"))
+    boton_materias.pack(side="left", padx=10)
+    boton_calendario = tk.Button(frame_botones, text="Calendario Escolar", bg="#4682b4", fg="white", font=("Arial", 12, "bold"))
+    boton_calendario.pack(side="left", padx=10)
+    boton_curricular = tk.Button(frame_botones, text="Cuadro Curricular", bg="#4682b4", fg="white", font=("Arial", 12, "bold"))
+    boton_curricular.pack(side="left", padx=10)
+
+    # Pestaña de perfil
+    frame_perfil = tk.Frame(notebook, bg="#add8e6")
+    notebook.add(frame_perfil, text="Perfil")
+    label_perfil = tk.Label(frame_perfil, text="Información de perfil", bg="#add8e6", font=("Arial", 16))
+    label_perfil.pack(pady=20)
+    
+    # Marco para la foto
+    marco_foto = tk.LabelFrame(frame_perfil, text="Foto", bg="#add8e6", font=("Arial", 12))
+    marco_foto.pack(pady=10)
+    
+    # Campos para nombre, grupo, plantel y edad
+    etiqueta_nombre = tk.Label(frame_perfil, text="Nombre:", bg="#add8e6", font=("Arial", 12))
+    etiqueta_nombre.pack(pady=5)
+    entrada_nombre = tk.Entry(frame_perfil, width=30)
+    entrada_nombre.pack()
+    etiqueta_grupo = tk.Label(frame_perfil, text="Grupo:", bg="#add8e6", font=("Arial", 12))
+    etiqueta_grupo.pack(pady=5)
+    entrada_grupo = tk.Entry(frame_perfil, width=30)
+    entrada_grupo.pack()
+    etiqueta_plantel = tk.Label(frame_perfil, text="Plantel:", bg="#add8e6", font=("Arial", 12))
+    etiqueta_plantel.pack(pady=5)
+    entrada_plantel = tk.Entry(frame_perfil, width=30)
+    entrada_plantel.pack()
+    etiqueta_edad = tk.Label(frame_perfil, text="Edad:", bg="#add8e6", font=("Arial", 12))
+    etiqueta_edad.pack(pady=5)
+    entrada_edad = tk.Entry(frame_perfil, width=30)
+    entrada_edad.pack()
+
+    # Pestaña de tareas
+    frame_tareas = tk.Frame(notebook, bg="#90ee90")
+    notebook.add(frame_tareas, text="Tareas")
+    label_tareas = tk.Label(frame_tareas, text="Tareas asignadas", bg="#90ee90", font=("Arial", 16))
+    label_tareas.pack(pady=20)
+    
+    # Botones para materias
+    materias = [
+        "Desarrolla Aplicaciones Móviles para Android",
+        "Desarrolla Aplicaciones Móviles para IOS",
+        "Probabilidad y Estadística",
+        "Matemáticas Aplicadas",
+        "Física"
+    ]
+    for materia in materias:
+        boton_materia = tk.Button(frame_tareas, text=materia, bg="#4682b4", fg="white", font=("Arial", 12, "bold"))
+        boton_materia.pack(pady=10)
+
+    ventana.mainloop()
+
+ventana_inicial.mainloop()
